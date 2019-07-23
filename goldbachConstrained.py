@@ -1,4 +1,3 @@
-#C:\Users\Mike\AppData\Local\Programs\Python\Python37-32\python.exe C:\Users\Mike\Desktop\python\goldbach1.py
 import math
 
 #The Goldbach Conjecture asserts that every even number above 3 is the sum of two primes, or
