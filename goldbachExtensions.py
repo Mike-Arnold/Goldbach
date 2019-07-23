@@ -1,4 +1,3 @@
-#C:\Users\Mike\AppData\Local\Programs\Python\Python37-32\python.exe C:\Users\Mike\Desktop\python\goldbach.py
 import math
 
 #The Goldbach Conjecture is an unproven statement that any even number is the sum of two primes, 
