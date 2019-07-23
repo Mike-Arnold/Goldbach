@@ -26,7 +26,7 @@ primes = [] #we may include 1 as a 'prime' in order to get some smaller solution
 primeStart = len(primes) #start at 1 if 1 is included, and 0 if it is not
 
 c=2 #first number to check for primality
-max = 12000 #count to this prime number candidate and then stop
+max = 1000 #count to this prime number candidate and then stop
 
 while c < max:
 	
@@ -52,7 +52,7 @@ while c < max:
 #This second section picks two coefficients and builds a list of their factors
 
 #A and B must be relatively prime, or only trivial solutions will be found
-A=77
+A=5
 B=2
 
 #the following builds a list of prime factors of A and B
@@ -86,8 +86,7 @@ while primes[p1] <= B: #check all primes less than B
 
 #x is our iterative variable to check which numbers (either evens or odds) have solutions
 #earliest possible match is 3A + 3B
-x=(3*A)+(3*B) 
-x=6001
+x=(3*A)+(3*B)
 
 match = 0 #match is a variable that checks whether A is relatively prime to x
 
