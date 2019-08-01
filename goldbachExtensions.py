@@ -22,15 +22,15 @@ import math
 #part one
 #This first section generates a list of prime numbers
 
-primes = [-1,0,1] #we may include 1, 0, or some negatives of primes as additional 'primes' in order to get some smaller solutions
+primes = [1] #we may include 1 as an additional 'prime' in order to get some smaller solutions
 primeStart = len(primes) #the index of the first prime number, namely "2".
-						 #This index is usually zero, but may increase if we include 1, 0, -1, -2, etc.
+						 #This index is usually zero, but may increase if we include 1, or negative primes
 
 possPrime = 2 #integer to check for primality, starts at 2 and increases to maxPossPrime
 
 #********EDIT HERE********
 #This number roughly determines the upper limit of n, so for checking larger numbers, use a larger value here
-maxPossPrime = 50 #count to this prime number candidate and then stop
+maxPossPrime = 132 #count to this prime number candidate and then stop
 
 while possPrime < maxPossPrime:
 	
@@ -54,15 +54,15 @@ while possPrime < maxPossPrime:
 		
 	possPrime += 1
 	
-
+print("Primes: " + str(len(primes)))
 #part two
 #This second section picks two coefficients and builds a list of their factors
 
 #*************EDIT HERE*************
 #Edit this part of the code to pick which equation you want to solve for
 #A and B must be relatively prime, or only trivial solutions will be found
-A=7
-B=2
+A=17
+B=5
 
 #the following builds a list of prime factors of A and B
 factors_AB = []
@@ -78,9 +78,8 @@ while primes[possFactorIndex] <= A: #check all primes less than A
 possFactorIndex=primeStart #reset back to the index of 2.
 while primes[possFactorIndex] <= B: #check all primes less than B
 
-	if B%primes[possFactorIndex] == 0: #if this prime is a factor,
-		
-		factors_AB.append(primes[possFactorIndex]) #add it to the list of factors
+	if B%primes[possFactorIndex] == 0: 				#if this prime is a factor,
+		factors_AB.append(primes[possFactorIndex]) 	#add it to the list of factors
 
 	possFactorIndex += 1
 #print(factors_AB)  #unhide this to double check that the factors are what you expected
@@ -94,8 +93,10 @@ while primes[possFactorIndex] <= B: #check all primes less than B
 	#and if it isn't relatively prime, that possSolution is not checked
 
 #possSolution is our iterative variable to check which numbers have solutions.
-#The earliest possible match that we will check is 3A + 3B.  Be careful trying for lower solutions, because the even or oddness might change.
-possSolution=(3*A)+(3*B)
+#Two common starting points are written here now.  Be careful that the starting point has the right even or oddness.
+
+#possSolution=(3*A)+(3*B)
+possSolution=(A+B)%2
 
 match = 0 #match is a variable that checks whether A (or B) is relatively prime to possSolution
 
@@ -124,15 +125,18 @@ while possSolution < primes[len(primes)-2]: #this loop finds solutions and can d
 				if possSolution == Ap+Bq:
 				
 					solutionFound = 1   #frequently, more than one solution will be found, so this indicator may already be at 1
-					#*********************************************COMMENT THIS LINE IN OR OUT*********************************************
-					#hide the following line to stop the spamming of successful solutions
 					print(str(possSolution) + " = (" + str(A) + " * " + str(primes[pIndex]) + ") + (" + str(B) + " * " + str(primes[qIndex]) + ")")
 				
-				#this checks for solutions of the form Ap - Bq (gaps between primes)
-				#if possSolution == Ap-Bq:
+				#these check for solutions of the form Ap - Bq, or Bq - Ap (gaps between primes)
+				if possSolution == Ap-Bq:
 				
-					#solutionFound = 1
-					#print(str(possSolution) + " = (" + str(A) + " * " + str(primes[pIndex]) + ") - (" + str(B) + " * " + str(primes[qIndex]) + ")")
+					solutionFound = 1
+					print(str(possSolution) + " = (" + str(A) + " * " + str(primes[pIndex]) + ") - (" + str(B) + " * " + str(primes[qIndex]) + ")")
+				
+				if possSolution == Bq-Ap:
+				
+					solutionFound = 1
+					print(str(possSolution) + " = (" + str(B) + " * " + str(primes[qIndex]) + ") - (" + str(A) + " * " + str(primes[pIndex]) + ")")
 				
 				qIndex += 1
 				Bq = B*primes[qIndex]
@@ -150,15 +154,15 @@ while possSolution < primes[len(primes)-2]: #this loop finds solutions and can d
 	#we must check if possSolution now shares any factors with A or B (we want to exclude trivial exeptions)
 	
 	#the following builds a list of factors of possSolution
-	q1=primeStart
+	possFactorIndex=primeStart
 	factors_possSolution = []
-	while primes[q1] <= possSolution : #check all primes less than possSolution
+	while primes[possFactorIndex] <= possSolution : #check all primes less than possSolution
 	
-		if possSolution%primes[q1] == 0: #if this prime is a factor,
+		if possSolution%primes[possFactorIndex] == 0: #if this prime is a factor,
 		
-			factors_possSolution.append(primes[q1]) #add it to the list of factors
+			factors_possSolution.append(primes[possFactorIndex]) #add it to the list of factors
 	
-		q1 += 1
+		possFactorIndex += 1
 	#print(factors_possSolution)	
 	
 	#now, we do a nested loop to check if there are any common factors between possSolution and A or B
