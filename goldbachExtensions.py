@@ -1,3 +1,4 @@
+#C:\Users\Mike\AppData\Local\Programs\Python\Python37-32\python.exe C:\Users\Mike\Desktop\python\goldbachExtensions.py
 import math
 
 #The Goldbach Conjecture is an unproven statement that any even number is the sum of two primes, 
@@ -21,149 +22,157 @@ import math
 #part one
 #This first section generates a list of prime numbers
 
-primes = [] #we may include 1 as a 'prime' in order to get some smaller solutions
-primeStart = len(primes) #start at 1 if 1 is included, and 0 if it is not
+primes = [-1,0,1] #we may include 1, 0, or some negatives of primes as additional 'primes' in order to get some smaller solutions
+primeStart = len(primes) #the index of the first prime number, namely "2".
+						 #This index is usually zero, but may increase if we include 1, 0, -1, -2, etc.
 
-c=2 #first number to check for primality
-max = 1000 #count to this prime number candidate and then stop
+possPrime = 2 #integer to check for primality, starts at 2 and increases to maxPossPrime
 
-while c < max:
+#********EDIT HERE********
+#This number roughly determines the upper limit of n, so for checking larger numbers, use a larger value here
+maxPossPrime = 50 #count to this prime number candidate and then stop
+
+while possPrime < maxPossPrime:
 	
-	d=2
-	e=math.sqrt(c)
-	maybePrime = 1
+	divisor = 2 #we will divide possPrime by every plausible integer, not just primes.  This is to make the code cleaner
+	#We could divide only by primes, but it's a tiny part of the runtime either way.
 	
-	while d <= e:
+	highestDivisor=math.sqrt(possPrime) #we check only up to the square root of possPrime
+	maybePrime = 1 #this is set to 1 unless and until we find a number that evenly divides possPrime
+	
+	while divisor <= highestDivisor:  #stop when the divisor gets high enough to be unneeded
 		
-		f=c%d #check if there is no remainder
-		if f == 0:
-			maybePrime = 0
+		remainder=possPrime%divisor #check if there is no remainder
+		if remainder == 0: 			#if there's no remainder,
+			maybePrime = 0 			#then possPrime is not prime
+			divisor = possPrime 	#and so, increase divisor to a relatively large number so that the loop will break
 			
-		d += 1
+		divisor += 1
 	
-	if maybePrime == 1:
-		primes.append(c)
+	if maybePrime == 1: 			#if it's still maybe a prime and we've checked 
+		primes.append(possPrime)	#every case where it could fail out, it is prime
 		
-	c += 1
+	possPrime += 1
 	
 
 #part two
 #This second section picks two coefficients and builds a list of their factors
 
+#*************EDIT HERE*************
+#Edit this part of the code to pick which equation you want to solve for
 #A and B must be relatively prime, or only trivial solutions will be found
-A=5
+A=7
 B=2
 
 #the following builds a list of prime factors of A and B
 factors_AB = []
-p1=primeStart
-while primes[p1] <= A: #check all primes less than A
+possFactorIndex=primeStart #sets our possible factor index to the index of the first prime (namely, 2).  Usually this index is simply zero.
+while primes[possFactorIndex] <= A: #check all primes less than A
 	
-	if A%primes[p1] == 0: #if this prime is a factor,
+	if A%primes[possFactorIndex] == 0: #if this prime is a factor,
 		
-		factors_AB.append(primes[p1]) #add it to the list of factors
+		factors_AB.append(primes[possFactorIndex]) #add it to the list of factors
 	
-	p1 += 1
+	possFactorIndex += 1
 	
-p1=primeStart
-while primes[p1] <= B: #check all primes less than B
+possFactorIndex=primeStart #reset back to the index of 2.
+while primes[possFactorIndex] <= B: #check all primes less than B
 
-	if B%primes[p1] == 0: #if this prime is a factor,
+	if B%primes[possFactorIndex] == 0: #if this prime is a factor,
 		
-		factors_AB.append(primes[p1]) #add it to the list of factors
+		factors_AB.append(primes[possFactorIndex]) #add it to the list of factors
 
-	p1 += 1
-#print(factors_AB)
+	possFactorIndex += 1
+#print(factors_AB)  #unhide this to double check that the factors are what you expected
 
 #part three
-#This third section has two parts
-#The first part checks if x is a solution to Ap+Bq
-	#x is either all evens or all odds
+#This third section has two halves
+#The first half checks if possSolution is a solution to Ap+Bq
+	#possSolution is either all evens or all odds
 	#except for numbers not relatively prime to either A or B
-#The second part checks whether the next x is relatively prime to A or B,
-	#and skips looking for a match if it shares any factors
+#The second half checks whether the next possSolution is relatively prime to A or B,
+	#and if it isn't relatively prime, that possSolution is not checked
 
-#x is our iterative variable to check which numbers (either evens or odds) have solutions
-#earliest possible match is 3A + 3B
-x=(3*A)+(3*B)
+#possSolution is our iterative variable to check which numbers have solutions.
+#The earliest possible match that we will check is 3A + 3B.  Be careful trying for lower solutions, because the even or oddness might change.
+possSolution=(3*A)+(3*B)
 
-match = 0 #match is a variable that checks whether A is relatively prime to x
+match = 0 #match is a variable that checks whether A (or B) is relatively prime to possSolution
 
-while x < primes[len(primes)-2]: #we will check if x is equal to Ap +/- Bq
-
-	p=0
-	y = A*primes[p]
+while possSolution < primes[len(primes)-2]: #this loop finds solutions and can display them.  At the least it will declare if no solutions are found
+											#The loop has confusing behavior if it reaches the very last prime, so we stop before then.
+	
+	pIndex = 0
+	Ap = A*primes[pIndex]  #the 'left chunk' of Ap + Bq .......
 	solutionFound = 0
 	
 	if match == 0:
-		while y < A*primes[len(primes)-2]:
+		while Ap < A*primes[len(primes)-2]:
 		
-			q=0
+			qIndex = 0
 			
-			if A == B:
+			if A == B: #true in the base case of A = B = 1
 				
-				q = p #in the base case we want to skip counting the same solution twice
+				qIndex = pIndex #in the base case we want to skip counting the same solution twice, so jump qIndex up.
+								#Don't jump qIndex up to pIndex in any other case.
 			
-			z = B*primes[q]
+			Bq = B*primes[qIndex] #...... the 'right chunk' of Ap + Bq
 			
-			w=x-y
-			while z <= B*primes[len(primes)-2]:
+			while Bq <= B*primes[len(primes)-2]:
 			
 				#this checks for solutions of the form Ap + Bq (goldbachy solutions)
-				if x == y+z:
+				if possSolution == Ap+Bq:
 				
-					solutionFound = 1
+					solutionFound = 1   #frequently, more than one solution will be found, so this indicator may already be at 1
+					#*********************************************COMMENT THIS LINE IN OR OUT*********************************************
 					#hide the following line to stop the spamming of successful solutions
-					#print(str(x) + " = (" + str(A) + " * " + str(primes[p]) + ") + (" + str(B) + " * " + str(primes[q]) + ")")
+					print(str(possSolution) + " = (" + str(A) + " * " + str(primes[pIndex]) + ") + (" + str(B) + " * " + str(primes[qIndex]) + ")")
 				
 				#this checks for solutions of the form Ap - Bq (gaps between primes)
-				#if x == y-z:
+				#if possSolution == Ap-Bq:
 				
 					#solutionFound = 1
-					#print(str(x) + " = (" + str(A) + " * " + str(primes[p]) + ") - (" + str(B) + " * " + str(primes[q]) + ")")
+					#print(str(possSolution) + " = (" + str(A) + " * " + str(primes[pIndex]) + ") - (" + str(B) + " * " + str(primes[qIndex]) + ")")
 				
-				q += 1
-				z = B*primes[q]
+				qIndex += 1
+				Bq = B*primes[qIndex]
 			
-			p += 1
-			y = A*primes[p]
+			pIndex += 1
+			Ap = A*primes[pIndex]
 		
 		if solutionFound == 0:
 			
-			print(str(x) + " has no match")
+			print(str(possSolution) + " has no match")
 		
-	x += 2
+	possSolution += 2
 	
 	#we have a list of factors of A and B
-	#we must check if x now shares any factors with A or B
-		#numbers x which share any factors with A or B will create trivial exceptions in almost all cases
+	#we must check if possSolution now shares any factors with A or B (we want to exclude trivial exeptions)
 	
-	#so let's build a list of factors of x
-	
-	#the following builds a list of factors of x
+	#the following builds a list of factors of possSolution
 	q1=primeStart
-	factors_x = []
-	while primes[q1] <= x : #check all primes less than x
+	factors_possSolution = []
+	while primes[q1] <= possSolution : #check all primes less than possSolution
 	
-		if x%primes[q1] == 0: #if this prime is a factor,
+		if possSolution%primes[q1] == 0: #if this prime is a factor,
 		
-			factors_x.append(primes[q1]) #add it to the list of factors
+			factors_possSolution.append(primes[q1]) #add it to the list of factors
 	
 		q1 += 1
-	#print(factors_x)	
+	#print(factors_possSolution)	
 	
-	#now, we do a nested loop to check if there are any matches
+	#now, we do a nested loop to check if there are any common factors between possSolution and A or B
 	#if we have a match, we skip checking it up above
 	match = 0
 	i=0
 	j=0
 	while i < len(factors_AB):
 		
-		while j < len(factors_x):
+		while j < len(factors_possSolution):
 			
-			if factors_AB[i] == factors_x[j]:
+			if factors_AB[i] == factors_possSolution[j]:
 			
-				match = 1	#turn this to zero to turn off filtering of numbers that aren't relatively prime
+				match = 1	#turn this to 0 to see all the trivial exceptions
 			
 			j += 1
 			
